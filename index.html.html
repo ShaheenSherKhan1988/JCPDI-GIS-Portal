@@ -1234,7 +1234,153 @@
         document.addEventListener('DOMContentLoaded', () => {
             showSection('home');
             populateUpdates();
+            // Cache English text for EN↔AR restore
+            document.querySelectorAll('[data-i18n]').forEach(el => { el._en = el.innerHTML; });
         });
+
+        // ══════════════════════════════════════════
+        // LANGUAGE SWITCHER  (EN ↔ AR)
+        // ══════════════════════════════════════════
+        // ══════════════════════════════════════════
+        const TRANSLATIONS = {
+            // ── Top bar ──
+            topbar_location:      'مدينة جازان الاقتصادية، المملكة العربية السعودية',
+            topbar_status:        'جميع الأنظمة تعمل',
+            // ── Logo ──
+            logo_sub:             'بوابة نظم المعلومات الجغرافية',
+            // ── Nav ──
+            nav_home:             'الرئيسية',
+            nav_apps:             'التطبيقات',
+            nav_dashboards:       'لوحات البيانات',
+            nav_webmaps:          'الخرائط التفاعلية',
+            nav_downloads:        'البيانات والخرائط',
+            nav_downloads_short:  'التنزيلات',
+            nav_contact:          'تواصل معنا',
+            contact_btn:          'تواصل مع فريق نظم المعلومات',
+            // ── Hero ──
+            hero_badge:           'حلول نظم المعلومات الجغرافية الصناعية',
+            hero_title1:          'مدينة جازان',
+            hero_title2:          'بوابة نظم المعلومات',
+            hero_desc:            'منصة جغرافية مركزية للصناعات الأولية والتحويلية. تصفح التطبيقات التفاعلية ولوحات البيانات الفورية والخرائط الإلكترونية والموارد القابلة للتنزيل لمدينة جازان الاقتصادية.',
+            hero_btn1:            'استكشاف التطبيقات',
+            hero_btn2:            'عرض لوحات البيانات',
+            stat_apps:            'تطبيق نظم المعلومات',
+            stat_maps:            'خريطة تفاعلية',
+            stat_layers:          'طبقة بيانات',
+            // ── Quick Access ──
+            quick_access:         'الوصول السريع',
+            qa_apps_sub:          '8 أدوات نظم معلومات جغرافية متخصصة',
+            qa_dash_sub:          'تحليلات فورية',
+            qa_maps_sub:          'رسم خرائط تفاعلي',
+            qa_dl_sub:            'ملفات PDF، بيانات، تقارير',
+            // ── Updates ──
+            recent_updates:       'آخر التحديثات',
+            last_updated:         'آخر تحديث: اليوم',
+            // ── Applications ──
+            apps_heading:         'التطبيقات',
+            apps_sub:             'تطبيقات جغرافية متخصصة طُوِّرت لصناعات مدينة جازان الأولية والتحويلية.',
+            filter_all_apps:      'جميع التطبيقات',
+            filter_primary:       'الصناعات الأولية',
+            filter_downstream:    'الصناعات التحويلية',
+            filter_utilities:     'المرافق',
+            filter_environment:   'البيئة',
+            // ── Dashboards ──
+            dash_heading:         'لوحات البيانات',
+            dash_sub:             'لوحات تشغيلية فورية لرصد المناطق الصناعية والبنية التحتية في مدينة جازان.',
+            // ── Web Maps ──
+            webmaps_heading:      'الخرائط التفاعلية',
+            webmaps_sub:          'استكشاف المناطق الصناعية في جازان عبر خرائط ArcGIS التفاعلية.',
+            // ── Downloads ──
+            dl_heading:           'الموارد',
+            dl_sub:               'تنزيل خرائط PDF والبيانات المكانية والتقارير والوثائق التقنية لعمليات JCPDI.',
+            dl_filter_all:        'جميع الموارد',
+            dl_filter_pdf:        'خرائط PDF',
+            dl_filter_spatial:    'البيانات المكانية',
+            dl_filter_reports:    'التقارير',
+            dl_filter_standards:  'المعايير',
+            // ── Contact ──
+            contact_heading:      'فريق نظم المعلومات',
+            contact_sub:          'تواصل مع فريق نظم المعلومات الجغرافية في JCPDI للدعم أو طلب البيانات أو التعاون.',
+            contact_center:       'مركز عمليات نظم المعلومات الجغرافية',
+            contact_address:      'شركة مدينة جازان للصناعات الأولية والتحويلية<br>مدينة جازان الاقتصادية، منطقة جازان<br>المملكة العربية السعودية',
+            contact_label:        'التواصل',
+            contact_info:         'gis@jcpdi.com.sa<br>+966 17 XXX XXXX',
+            send_message:         'أرسل رسالة',
+            placeholder_name:     'اسمك',
+            placeholder_email:    'البريد الإلكتروني',
+            placeholder_msg:      'رسالتك...',
+            send_btn:             'إرسال الرسالة',
+            // ── Footer ──
+            footer_text:          '© 2026 بوابة نظم المعلومات الجغرافية — مدينة جازان للصناعات الأولية والتحويلية — مدعومة بـ',
+            // ── Buttons (Launch / Download / Open Map) ──
+            btn_launch:           'تشغيل',
+            btn_download:         'تنزيل',
+            btn_open_map:         'فتح الخريطة',
+            btn_open_dash:        'فتح لوحة البيانات',
+        };
+
+        let currentLang = 'en';
+
+        function setLang(lang) {
+            currentLang = lang;
+            const isAr = lang === 'ar';
+
+            // ── Set document direction & language ──
+            document.documentElement.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+            document.documentElement.setAttribute('lang', isAr ? 'ar' : 'en');
+
+            // ── Toggle button styles ──
+            document.getElementById('lang-en').className =
+                'px-3 py-2 transition-all ' + (isAr ? 'text-slate-400 hover:text-white' : 'lang-btn-active');
+            document.getElementById('lang-ar').className =
+                'px-3 py-2 transition-all ' + (isAr ? 'lang-btn-active' : 'text-slate-400 hover:text-white');
+
+            // ── Translate all [data-i18n] elements ──
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (isAr && TRANSLATIONS[key]) {
+                    el.innerHTML = TRANSLATIONS[key];
+                } else {
+                    // Restore English — reload from a cached map
+                    if (el._en !== undefined) el.innerHTML = el._en;
+                }
+            });
+
+            // ── Translate contact form placeholders ──
+            const fields = [
+                ['placeholder_name',  'input[placeholder="Your name"]',      'Your name'],
+                ['placeholder_email', 'input[placeholder="Email address"]',  'Email address'],
+                ['placeholder_msg',   'textarea[placeholder="Your message..."]', 'Your message...'],
+            ];
+            fields.forEach(([key, sel, enVal]) => {
+                const el = document.querySelector(sel) ||
+                           document.querySelector(`[placeholder="${isAr ? '' : enVal}"]`);
+                if (el) el.placeholder = isAr ? TRANSLATIONS[key] : enVal;
+            });
+
+            // ── Translate footer ──
+            const footer = document.querySelector('footer p');
+            if (footer) {
+                if (isAr) {
+                    footer.innerHTML = TRANSLATIONS.footer_text + ' <span class="text-jcpdi-400">ArcGIS</span>';
+                } else {
+                    footer.innerHTML = '&copy; 2026 JCPDI GIS Portal &mdash; Jazan City Primary &amp; Downstream Industries &mdash; Powered by <span class="text-jcpdi-400">ArcGIS</span>';
+                }
+            }
+
+            // ── Add Arabic font if needed ──
+            if (isAr && !document.getElementById('arabic-font')) {
+                const link = document.createElement('link');
+                link.id = 'arabic-font';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Arabic:wght@400;600;700&display=swap';
+                document.head.appendChild(link);
+                document.body.style.fontFamily = "'Noto Sans Arabic', sans-serif";
+            } else if (!isAr) {
+                document.body.style.fontFamily = '';
+            }
+        }
+
     </script>
 </body>
 </html>
