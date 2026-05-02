@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JCPDI GIS Portal | الهيئة الملكية للجبيل وينبع</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rc-navy:    #003366;
+            --rc-gold:    #C8962A;
+            --rc-light:   #E8EDF4;
+            --rc-dark:    #001A3A;
+            --rc-mid:     #00509E;
+            --rc-accent:  #F5A623;
+            --rc-white:   #FFFFFF;
+            --rc-gray:    #6B7D96;
+        }
+        * { box-sizing: border-box; }
+        body {
+            background: var(--rc-dark);
+            color: #E8EDF4;
+            font-family: 'Sora', 'IBM Plex Sans Arabic', sans-serif;
+            overflow-x: hidden;
+        }
+        html[dir="rtl"] body { font-family: 'IBM Plex Sans Arabic', 'Sora', sans-serif; }
+
+        /* ── GRID BG ── */
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(0,80,158,0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,80,158,0.08) 1px, transparent 1px);
+            background-size: 48px 48px;
+        }
+
+        /* ── GLASS ── */
+        .glass {
+            background: rgba(0, 26, 58, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(200, 150, 42, 0.15);
+        }
+        .glass-light {
+            background: rgba(0, 51, 102, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(200, 150, 42, 0.12);
+        }
+
+        /* ── GRADIENT TEXT ── */
+        .gold-text {
+            background: linear-gradient(135deg, #C8962A 0%, #F5D080 50%, #C8962A 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .navy-gradient {
+            background: linear-gradient(135deg, var(--rc-navy) 0%, var(--rc-mid) 100%);
+        }
+
+        /* ── CARD HOVER ── */
+        .card-lift {
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+            border: 1px solid rgba(200,150,42,0.1);
+        }
+        .card-lift:hover {
+            transform: translateY(-6px);
+            border-color: rgba(200,150,42,0.4);
+            box-shadow: 0 20px 40px -10px rgba(200,150,42,0.15), 0 0 0 1px rgba(200,150,42,0.1);
+        }
+
+        /* ── NAV ACTIVE ── */
+        .nav-active {
+            color: var(--rc-gold) !important;
+            border-bottom: 2px solid var(--rc-gold);
+        }
+
+        /* ── GOLD BUTTON ── */
+        .btn-gold {
+            background: linear-gradient(135deg, #C8962A 0%, #E5B840 100%);
+            color: #001A3A;
+            font-weight: 700;
+            transition: all 0.3s;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(135deg, #E5B840 0%, #F5D080 100%);
+            box-shadow: 0 8px 24px -4px rgba(200,150,42,0.4);
+            transform: translateY(-1px);
+        }
+
+        /* ── NAVY BUTTON ── */
+        .btn-navy {
+            background: linear-gradient(135deg, #003366 0%, #00509E 100%);
+            color: #fff;
+            font-weight: 600;
+            transition: all 0.3s;
+            border: 1px solid rgba(200,150,42,0.3);
+        }
+        .btn-navy:hover {
+            background: linear-gradient(135deg, #00509E 0%, #0066CC 100%);
+            border-color: rgba(200,150,42,0.6);
+            transform: translateY(-1px);
+        }
+
+        /* ── SECTION HIDDEN ── */
+        .section-content { display: none; }
+        .section-content.active { display: block; }
+
+        /* ── PULSE DOT ── */
+        .pulse-dot {
+            animation: pulseDot 2s infinite;
+            box-shadow: 0 0 0 0 rgba(200,150,42,0.7);
+        }
+        @keyframes pulseDot {
+            0%   { box-shadow: 0 0 0 0 rgba(200,150,42,0.7); }
+            70%  { box-shadow: 0 0 0 8px rgba(200,150,42,0); }
+            100% { box-shadow: 0 0 0 0 rgba(200,150,42,0); }
+        }
+
+        /* ── FILTER ACTIVE ── */
+        .filter-active {
+            background: linear-gradient(135deg, #C8962A, #E5B840);
+            color: #001A3A !important;
+            border-color: transparent !important;
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--rc-dark); }
+        ::-webkit-scrollbar-thumb { background: rgba(200,150,42,0.4); border-radius: 3px; }
+
+        /* ── INPUT STYLES ── */
+        .rc-input {
+            background: rgba(0,51,102,0.3);
+            border: 1px solid rgba(200,150,42,0.2);
+            border-radius: 10px;
+            padding: 12px 16px;
+            color: #E8EDF4;
+            width: 100%;
+            font-family: inherit;
+            font-size: 0.875rem;
+            transition: border-color 0.2s;
+        }
+        .rc-input:focus {
+            outline: none;
+            border-color: var(--rc-gold);
+            background: rgba(0,51,102,0.5);
+        }
+        .rc-input::placeholder { color: rgba(200,220,255,0.35); }
+
+        /* ── CHECKBOX ── */
+        .rc-check-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .rc-check-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 14px;
+            background: rgba(0,51,102,0.3);
+            border: 1px solid rgba(200,150,42,0.15);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.82rem;
+        }
+        .rc-check-item:hover {
+            border-color: rgba(200,150,42,0.4);
+            background: rgba(0,51,102,0.5);
+        }
+        .rc-check-item input[type="checkbox"] {
+            accent-color: var(--rc-gold);
+            width: 16px; height: 16px;
+        }
+
+        /* ── SECTION DIVIDER ── */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(200,150,42,0.4), transparent);
+        }
+
+        /* ── TAG BADGE ── */
+        .tag-badge {
+            font-size: 0.68rem;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+        }
+
+        /* ── MOBILE MENU OVERLAY ── */
+        #mobile-menu {
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+        #mobile-menu.open {
+            transform: translateY(0);
+        }
+
+        /* ── HERO GLOW ── */
+        .hero-glow {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        /* ── SEARCH OVERLAY ── */
+        #search-overlay {
+            transition: opacity 0.3s;
+        }
+        #search-overlay.hidden { opacity:0; pointer-events:none; }
+
+        /* ── NEWS CARD ── */
+        .news-img-placeholder {
+            background: linear-gradient(135deg, rgba(0,51,102,0.8), rgba(0,26,58,0.9));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ── TABLE ── */
+        .gwr-table { width: 100%; border-collapse: collapse; }
+        .gwr-table th {
+            background: rgba(200,150,42,0.15);
+            color: var(--rc-gold);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(200,150,42,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        html[dir="rtl"] .gwr-table th { text-align: right; }
+        .gwr-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            font-size: 0.82rem;
+        }
+        .gwr-table tr:hover td { background: rgba(0,80,158,0.1); }
+
+        /* ── TOAST ── */
+        #toast {
+            transition: all 0.4s;
+            transform: translateY(100px);
+            opacity: 0;
+        }
+        #toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .rc-check-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     TOP BAR
+══════════════════════════════════════════════ -->
+<div style="background:var(--rc-navy);border-bottom:1px solid rgba(200,150,42,0.2);" class="text-xs py-2 px-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <div class="flex items-center gap-4 text-blue-200 text-xs">
+            <span class="flex items-center gap-1.5">
+                <i class="fas fa-globe" style="color:var(--rc-gold)"></i>
+                <span data-i18n="topbar_loc">Jazan City for Primary and Downstream Industries — KSA</span>
+            </span>
+            <span class="hidden sm:flex items-center gap-1.5">
+                <i class="fas fa-clock" style="color:var(--rc-gold)"></i>
+                <span id="clock">--:--</span> AST
+            </span>
+        </div>
+        <div class="flex items-center gap-3">
+            <span class="flex items-center gap-1.5" style="color:var(--rc-gold)">
+                <span class="w-2 h-2 rounded-full pulse-dot" style="background:var(--rc-gold)"></span>
+                <span class="text-xs" data-i18n="topbar_status">All Systems Operational</span>
+            </span>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     NAVIGATION
+══════════════════════════════════════════════ -->
+<nav id="navbar" style="background:rgba(0,26,58,0.97);backdrop-filter:blur(20px);border-bottom:1px solid rgba(200,150,42,0.2);" class="sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-[72px]">
+
+            <!-- LOGO -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="showSection('home')">
+                <!-- RCJY Logo SVG -->
+                <div class="flex items-center gap-2">
+                    <svg width="52" height="44" viewBox="0 0 260 220" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Crown / Palm Tree simplified RCJY emblem -->
+                        <g transform="translate(130,110)">
+                            <!-- Palm fronds -->
+                            <path d="M0,-80 Q-40,-60 -60,-20" stroke="#C8962A" stroke-width="5" fill="none" stroke-linecap="round"/>
+                            <path d="M0,-80 Q-50,-50 -75,0" stroke="#C8962A" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <path d="M0,-80 Q-30,-80 -50,-65" stroke="#C8962A" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <path d="M0,-80 Q40,-60 60,-20" stroke="#C8962A" stroke-width="5" fill="none" stroke-linecap="round"/>
+                            <path d="M0,-80 Q50,-50 75,0" stroke="#C8962A" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <path d="M0,-80 Q30,-80 50,-65" stroke="#C8962A" stroke-width="4" fill="none" stroke-linecap="round"/>
+                            <!-- Trunk -->
+                            <path d="M0,-80 L0,60" stroke="#C8962A" stroke-width="6" stroke-linecap="round"/>
+                            <!-- Base -->
+                            <path d="M-30,60 Q0,50 30,60" stroke="#C8962A" stroke-width="5" fill="none"/>
+                            <!-- Crossed swords -->
+                            <path d="M-50,80 L50,80" stroke="#003366" stroke-width="4"/>
+                            <path d="M-45,90 L45,90" stroke="#003366" stroke-width="3"/>
+                            <!-- Crown -->
+                            <path d="M-35,-95 L-20,-75 L0,-90 L20,-75 L35,-95 L30,-110 L-30,-110 Z" fill="#C8962A"/>
+                        </g>
+                        <!-- Shield outline -->
+                        <path d="M130,10 L220,40 L220,140 Q220,190 130,210 Q40,190 40,140 L40,40 Z" fill="none" stroke="#C8962A" stroke-width="4" opacity="0.4"/>
+                    </svg>
+                    <div>
+                        <div class="font-bold text-base leading-none" style="color:var(--rc-gold)">RCJY — JCPDI</div>
+                        <div class="text-[9px] tracking-widest uppercase text-blue-300 mt-0.5" data-i18n="logo_sub">GIS Geospatial Portal</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DESKTOP NAV -->
+            <div class="hidden lg:flex items-center gap-0.5">
+                <button onclick="showSection('home')" data-section="home" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-home mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_home">Home</span>
+                </button>
+                <button onclick="showSection('applications')" data-section="applications" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-th-large mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_apps">Applications</span>
+                </button>
+                <button onclick="showSection('dashboards')" data-section="dashboards" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-chart-bar mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_dashboards">Dashboards</span>
+                </button>
+                <button onclick="showSection('webmaps')" data-section="webmaps" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-map mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_webmaps">Web Maps</span>
+                </button>
+                <button onclick="showSection('news')" data-section="news" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-newspaper mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_news">News & Events</span>
+                </button>
+                <button onclick="showSection('contact')" data-section="contact" class="nav-btn px-4 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-envelope mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_contact">Contact</span>
+                </button>
+                <button onclick="showSection('gwr')" data-section="gwr" class="nav-btn px-3 py-2 text-sm font-medium text-blue-200 hover:text-white transition-all border-b-2 border-transparent h-[72px]">
+                    <i class="fas fa-file-alt mr-1.5" style="color:var(--rc-gold)"></i><span data-i18n="nav_gwr">GIS Work Request</span>
+                </button>
+            </div>
+
+            <!-- RIGHT ACTIONS -->
+            <div class="flex items-center gap-2">
+                <!-- Lang Toggle -->
+                <div class="flex rounded-lg overflow-hidden border" style="border-color:rgba(200,150,42,0.3)">
+                    <button id="btn-en" onclick="setLang('en')" class="px-3 py-1.5 text-xs font-bold transition-all" style="background:var(--rc-gold);color:#001A3A">EN</button>
+                    <button id="btn-ar" onclick="setLang('ar')" class="px-3 py-1.5 text-xs font-bold text-blue-300 hover:text-white transition-all">AR</button>
+                </div>
+                <button onclick="toggleSearch()" class="w-9 h-9 rounded-lg flex items-center justify-center text-blue-300 hover:text-white transition-colors" style="background:rgba(0,51,102,0.5)">
+                    <i class="fas fa-search text-sm"></i>
+                </button>
+                <button onclick="toggleMobileMenu()" class="lg:hidden w-9 h-9 rounded-lg flex items-center justify-center text-blue-300" style="background:rgba(0,51,102,0.5)">
+                    <i class="fas fa-bars text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" class="lg:hidden absolute top-full left-0 right-0 z-40" style="background:rgba(0,20,48,0.98);backdrop-filter:blur(20px);border-bottom:1px solid rgba(200,150,42,0.2);">
+        <div class="px-4 py-4 space-y-1 max-h-[80vh] overflow-y-auto">
+            <button onclick="showSection('home');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-home w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_home">Home</span>
+            </button>
+            <button onclick="showSection('applications');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-th-large w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_apps">Applications</span>
+            </button>
+            <button onclick="showSection('dashboards');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-chart-bar w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_dashboards">Dashboards</span>
+            </button>
+            <button onclick="showSection('webmaps');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-map w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_webmaps">Web Maps</span>
+            </button>
+            <button onclick="showSection('news');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-newspaper w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_news">News & Events</span>
+            </button>
+            <button onclick="showSection('contact');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-envelope w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_contact">Contact</span>
+            </button>
+            <button onclick="showSection('gwr');closeMobileMenu()" class="w-full text-left px-4 py-3 rounded-xl text-blue-200 hover:text-white flex items-center gap-3 hover:bg-white/5 transition-colors">
+                <i class="fas fa-file-alt w-5" style="color:var(--rc-gold)"></i><span data-i18n="nav_gwr">GIS Work Request</span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+     SEARCH OVERLAY
+══════════════════════════════════════════════ -->
+<div id="search-overlay" class="hidden fixed inset-0 z-[60]" style="background:rgba(0,10,26,0.97);backdrop-filter:blur(20px)">
+    <div class="max-w-2xl mx-auto px-4 pt-24">
+        <div class="relative">
+            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-blue-400"></i>
+            <input id="search-input" type="text" data-i18n-placeholder="search_placeholder" placeholder="Search applications, dashboards, web maps..."
+                class="w-full px-5 py-4 pl-12 text-base rounded-2xl text-white placeholder-blue-400 focus:outline-none"
+                style="background:rgba(0,51,102,0.5);border:1px solid rgba(200,150,42,0.3);"
+                oninput="doSearch(this.value)">
+            <button onclick="toggleSearch()" class="absolute right-4 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center text-blue-400 hover:text-white">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="search-results" class="mt-4 space-y-2 max-h-[60vh] overflow-y-auto"></div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     HOME SECTION
+══════════════════════════════════════════════ -->
+<section id="section-home" class="section-content active">
+    <!-- HERO -->
+    <div class="relative min-h-[88vh] flex items-center overflow-hidden grid-bg">
+        <!-- Glows -->
+        <div class="hero-glow w-[500px] h-[500px] top-[-100px] right-[-100px] opacity-20" style="background:var(--rc-mid)"></div>
+        <div class="hero-glow w-[400px] h-[400px] bottom-0 left-[-80px] opacity-15" style="background:var(--rc-gold)"></div>
+        <div class="absolute inset-0" style="background:linear-gradient(180deg, rgba(0,26,58,0.4) 0%, rgba(0,26,58,0.85) 100%)"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-6" style="background:rgba(200,150,42,0.12);border:1px solid rgba(200,150,42,0.3);color:var(--rc-gold)">
+                        <span class="w-2 h-2 rounded-full animate-pulse" style="background:var(--rc-gold)"></span>
+                        <span data-i18n="hero_badge">Royal Commission for Jubail & Yanbu — JCPDI GIS</span>
+                    </div>
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-6 leading-[1.1]">
+                        <span data-i18n="hero_title1">Jazan City</span><br>
+                        <span class="gold-text" data-i18n="hero_title2">GIS Portal</span>
+                    </h1>
+                    <p class="text-base text-blue-200 mb-8 leading-relaxed max-w-xl" data-i18n="hero_desc">
+                        Centralized geospatial platform for Jazan City for Primary and Downstream Industries (JCPDI). Access interactive applications, real-time dashboards, web maps, and submit GIS work requests.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button onclick="showSection('applications')" class="btn-gold px-7 py-3.5 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-rocket"></i>
+                            <span data-i18n="hero_btn1">Explore Applications</span>
+                        </button>
+                        <button onclick="showSection('gwr')" class="btn-navy px-7 py-3.5 rounded-xl flex items-center gap-2">
+                            <i class="fas fa-file-signature"></i>
+                            <span data-i18n="hero_btn2">Submit GIS Request</span>
+                        </button>
+                    </div>
+
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-6 mt-12 pt-8" style="border-top:1px solid rgba(200,150,42,0.15)">
+                        <div>
+                            <div class="text-3xl font-bold gold-text font-mono">14</div>
+                            <div class="text-xs text-blue-300 mt-1" data-i18n="stat_apps">GIS Applications</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold font-mono" style="color:var(--rc-mid)">8</div>
+                            <div class="text-xs text-blue-300 mt-1" data-i18n="stat_maps">Web Maps</div>
+                        </div>
+                        <div>
+                            <div class="text-3xl font-bold font-mono text-emerald-400">9</div>
+                            <div class="text-xs text-blue-300 mt-1" data-i18n="stat_dash">Dashboards</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAP PREVIEW CARD -->
+                <div class="hidden lg:block">
+                    <div class="relative rounded-3xl overflow-hidden" style="border:1px solid rgba(200,150,42,0.2);background:rgba(0,26,58,0.8)">
+                        <div class="absolute inset-0 grid-bg opacity-30"></div>
+                        <svg viewBox="0 0 420 320" class="w-full">
+                            <defs>
+                                <linearGradient id="zoneGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#003366;stop-opacity:0.6"/>
+                                    <stop offset="100%" style="stop-color:#00509E;stop-opacity:0.3"/>
+                                </linearGradient>
+                            </defs>
+                            <!-- Industrial zones -->
+                            <rect x="40" y="60" width="140" height="90" rx="6" fill="url(#zoneGrad1)" stroke="#C8962A" stroke-width="1.5" opacity="0.8"/>
+                            <rect x="210" y="40" width="110" height="110" rx="6" fill="rgba(0,80,158,0.3)" stroke="#C8962A" stroke-width="1.5" opacity="0.8"/>
+                            <rect x="80" y="190" width="160" height="80" rx="6" fill="rgba(0,51,102,0.4)" stroke="#C8962A" stroke-width="1" opacity="0.7"/>
+                            <rect x="280" y="185" width="100" height="70" rx="6" fill="rgba(0,80,158,0.25)" stroke="#C8962A" stroke-width="1" opacity="0.6"/>
+                            <!-- Roads -->
+                            <path d="M0,155 L420,155" stroke="rgba(200,150,42,0.25)" stroke-width="2" stroke-dasharray="8,4"/>
+                            <path d="M200,0 L200,320" stroke="rgba(200,150,42,0.2)" stroke-width="1.5" stroke-dasharray="6,4"/>
+                            <!-- Labels -->
+                            <text x="85" y="108" fill="#C8962A" font-size="10" font-family="monospace" font-weight="bold">Primary Zone</text>
+                            <text x="228" y="90" fill="#C8962A" font-size="10" font-family="monospace">Downstream</text>
+                            <text x="120" y="233" fill="#C8962A" font-size="10" font-family="monospace">Utilities</text>
+                            <text x="290" y="223" fill="#C8962A" font-size="9" font-family="monospace">SEZ</text>
+                            <!-- Animated dots -->
+                            <circle cx="110" cy="100" r="5" fill="#C8962A"><animate attributeName="opacity" values="1;0.2;1" dur="2s" repeatCount="indefinite"/></circle>
+                            <circle cx="265" cy="95" r="5" fill="#00509E"><animate attributeName="opacity" values="1;0.2;1" dur="2.5s" repeatCount="indefinite"/></circle>
+                            <circle cx="160" cy="230" r="4" fill="#C8962A"><animate attributeName="opacity" values="1;0.2;1" dur="3s" repeatCount="indefinite"/></circle>
+                        </svg>
+                        <div class="absolute top-4 left-4 right-4 flex justify-between">
+                            <div class="px-3 py-1.5 rounded-lg text-xs font-mono" style="background:rgba(0,51,102,0.8);border:1px solid rgba(200,150,42,0.3);color:var(--rc-gold)">
+                                <i class="fas fa-layer-group mr-1"></i> JCPDI GIS Live
+                            </div>
+                            <div class="px-3 py-1.5 rounded-lg text-xs font-mono text-emerald-400" style="background:rgba(0,51,102,0.8);border:1px solid rgba(16,185,129,0.3)">
+                                <i class="fas fa-wifi mr-1"></i> Online
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK ACCESS -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="text-center mb-10">
+            <h2 class="text-2xl font-bold gold-text mb-2" data-i18n="quick_access">Quick Access</h2>
+            <p class="text-blue-300 text-sm" data-i18n="quick_access_sub">Navigate directly to any GIS service</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button onclick="showSection('applications')" class="group p-6 rounded-2xl text-left card-lift glass-light">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(200,150,42,0.12)">
+                    <i class="fas fa-th-large text-xl" style="color:var(--rc-gold)"></i>
+                </div>
+                <h3 class="font-semibold text-sm mb-1" data-i18n="nav_apps">Applications</h3>
+                <p class="text-xs text-blue-400" data-i18n="qa_apps_sub">14 interactive GIS apps</p>
+            </button>
+            <button onclick="showSection('dashboards')" class="group p-6 rounded-2xl text-left card-lift glass-light">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(0,80,158,0.2)">
+                    <i class="fas fa-chart-bar text-xl" style="color:var(--rc-mid)"></i>
+                </div>
+                <h3 class="font-semibold text-sm mb-1" data-i18n="nav_dashboards">Dashboards</h3>
+                <p class="text-xs text-blue-400" data-i18n="qa_dash_sub">Real-time analytics</p>
+            </button>
+            <button onclick="showSection('webmaps')" class="group p-6 rounded-2xl text-left card-lift glass-light">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(16,185,129,0.1)">
+                    <i class="fas fa-map text-xl text-emerald-400"></i>
+                </div>
+                <h3 class="font-semibold text-sm mb-1" data-i18n="nav_webmaps">Web Maps</h3>
+                <p class="text-xs text-blue-400" data-i18n="qa_maps_sub">Spatial data layers</p>
+            </button>
+            <button onclick="showSection('gwr')" class="group p-6 rounded-2xl text-left card-lift glass-light">
+                <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-4" style="background:rgba(200,150,42,0.1)">
+                    <i class="fas fa-file-signature text-xl" style="color:var(--rc-gold)"></i>
+                </div>
+                <h3 class="font-semibold text-sm mb-1" data-i18n="nav_gwr">GIS Work Request</h3>
+                <p class="text-xs text-blue-400" data-i18n="qa_gwr_sub">Submit a GWR form</p>
+            </button>
+        </div>
+    </div>
+
+    <!-- RECENT UPDATES -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        <div class="rounded-2xl p-6 glass-light">
+            <div class="flex items-center justify-between mb-5">
+                <h3 class="font-semibold flex items-center gap-2">
+                    <i class="fas fa-bell" style="color:var(--rc-gold)"></i>
+                    <span data-i18n="recent_updates">Recent Updates</span>
+                </h3>
+                <span class="text-xs text-blue-400" data-i18n="last_updated">Last updated: Today</span>
+            </div>
+            <div id="updates-feed" class="space-y-3"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     APPLICATIONS SECTION
+══════════════════════════════════════════════ -->
+<section id="section-applications" class="section-content">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold mb-2">GIS <span class="gold-text" data-i18n="apps_heading">Applications</span></h2>
+            <p class="text-blue-300 max-w-2xl" data-i18n="apps_sub">Specialized geospatial applications developed for JCPDI operations.</p>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="flex flex-wrap gap-2 mb-8">
+            <button onclick="filterCards('app','all')" class="app-filter filter-active px-4 py-2 rounded-lg text-sm font-semibold border transition-all" data-filter="all" data-i18n="filter_all">All</button>
+            <button onclick="filterCards('app','investment')" class="app-filter px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-blue-300 hover:text-white hover:bg-white/5 transition-all" data-filter="investment" data-i18n="filter_investment">Investment</button>
+            <button onclick="filterCards('app','projects')" class="app-filter px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-blue-300 hover:text-white hover:bg-white/5 transition-all" data-filter="projects" data-i18n="filter_projects">Projects</button>
+            <button onclick="filterCards('app','basemap')" class="app-filter px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-blue-300 hover:text-white hover:bg-white/5 transition-all" data-filter="basemap" data-i18n="filter_basemap">Base Maps</button>
+            <button onclick="filterCards('app','infrastructure')" class="app-filter px-4 py-2 rounded-lg text-sm font-medium border border-white/10 text-blue-300 hover:text-white hover:bg-white/5 transition-all" data-filter="infrastructure" data-i18n="filter_infra">Infrastructure</button>
+        </div>
+
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="apps-grid"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     DASHBOARDS SECTION
+══════════════════════════════════════════════ -->
+<section id="section-dashboards" class="section-content">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold mb-2">Analytics <span class="gold-text" data-i18n="dash_heading">Dashboards</span></h2>
+            <p class="text-blue-300 max-w-2xl" data-i18n="dash_sub">Real-time operational dashboards for JCPDI land use, projects, and infrastructure.</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-5" id="dashboards-grid"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     WEB MAPS SECTION
+══════════════════════════════════════════════ -->
+<section id="section-webmaps" class="section-content">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold mb-2">Interactive <span class="gold-text" data-i18n="webmaps_heading">Web Maps</span></h2>
+            <p class="text-blue-300 max-w-2xl" data-i18n="webmaps_sub">Explore JCPDI boundaries, land use, site readiness and more through ArcGIS web maps.</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-5" id="webmaps-grid"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     NEWS & EVENTS SECTION
+══════════════════════════════════════════════ -->
+<section id="section-news" class="section-content">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold mb-2">News <span class="gold-text" data-i18n="news_heading">& Events</span></h2>
+            <p class="text-blue-300 max-w-2xl" data-i18n="news_sub">Latest updates from JCPDI GIS team and Royal Commission announcements.</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="news-grid"></div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     CONTACT SECTION
+══════════════════════════════════════════════ -->
+<section id="section-contact" class="section-content">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-8">
+            <h2 class="text-4xl font-bold mb-2">Contact <span class="gold-text" data-i18n="contact_heading">GIS Team</span></h2>
+            <p class="text-blue-300" data-i18n="contact_sub">Reach out to the JCPDI GIS team for support, data requests, or collaboration.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-8">
+            <div class="space-y-5">
+                <div class="glass-light rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-map-marker-alt" style="color:var(--rc-gold)"></i>
+                        <span data-i18n="contact_office">GIS Operations Center</span>
+                    </h3>
+                    <p class="text-sm text-blue-300 leading-loose">
+                        <span data-i18n="contact_address1">Urban Planning Department – GIS Section</span><br>
+                        <span data-i18n="contact_address2">Jazan City for Primary & Downstream Industries</span><br>
+                        <span data-i18n="contact_address3">Jizan Province, Kingdom of Saudi Arabia</span>
+                    </p>
+                </div>
+                <div class="glass-light rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-envelope" style="color:var(--rc-gold)"></i>
+                        <span data-i18n="contact_label">Contact</span>
+                    </h3>
+                    <p class="text-sm text-blue-300">
+                        <a href="mailto:GIS@rcjy.gov.sa" class="hover:text-white transition-colors" style="color:var(--rc-gold)">GIS@rcjy.gov.sa</a><br>
+                        <span data-i18n="contact_sub_label">GIS UPD Jazan — Royal Commission</span>
+                    </p>
+                </div>
+                <div class="glass-light rounded-2xl p-6">
+                    <h3 class="font-semibold mb-4 flex items-center gap-2">
+                        <i class="fas fa-file-alt" style="color:var(--rc-gold)"></i>
+                        <span data-i18n="contact_gwr_title">Need GIS Support?</span>
+                    </h3>
+                    <p class="text-sm text-blue-300 mb-4" data-i18n="contact_gwr_desc">Submit a formal GIS Work Request (GWR) form for interdepartmental requests.</p>
+                    <button onclick="showSection('gwr')" class="btn-gold px-5 py-2.5 rounded-xl text-sm w-full">
+                        <i class="fas fa-file-signature mr-2"></i>
+                        <span data-i18n="contact_gwr_btn">Open GWR Form</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Quick message -->
+            <div class="glass-light rounded-2xl p-6">
+                <h3 class="font-semibold mb-5" data-i18n="contact_send">Send a Message</h3>
+                <div class="space-y-4">
+                    <input type="text" data-i18n-placeholder="ph_name" placeholder="Your name" class="rc-input">
+                    <input type="text" data-i18n-placeholder="ph_dept" placeholder="Department / Section" class="rc-input">
+                    <input type="email" data-i18n-placeholder="ph_email" placeholder="Email address" class="rc-input">
+                    <textarea rows="5" data-i18n-placeholder="ph_msg" placeholder="Your message..." class="rc-input resize-none"></textarea>
+                    <button class="btn-gold w-full py-3 rounded-xl" data-i18n="contact_send_btn">Send Message</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     GIS WORK REQUEST SECTION
+══════════════════════════════════════════════ -->
+<section id="section-gwr" class="section-content">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-4" style="background:rgba(200,150,42,0.12);border:1px solid rgba(200,150,42,0.3);color:var(--rc-gold)">
+                <i class="fas fa-file-alt"></i>
+                <span data-i18n="gwr_badge">Urban Planning Department – GIS Section</span>
+            </div>
+            <h2 class="text-4xl font-bold mb-2">GIS Work <span class="gold-text">Request Form</span></h2>
+            <p class="text-blue-300 text-sm" data-i18n="gwr_sub">Internal Use for Interdepartmental GIS Support Requests</p>
+        </div>
+
+        <div class="space-y-6" id="gwr-form">
+
+            <!-- GWR No Banner -->
+            <div class="flex items-center justify-between p-4 rounded-xl" style="background:rgba(200,150,42,0.08);border:1px solid rgba(200,150,42,0.25)">
+                <span class="text-sm font-semibold" style="color:var(--rc-gold)">GWR No: <span id="gwr-number" class="font-mono">AUTO-GENERATED</span></span>
+                <span class="text-xs text-blue-300" data-i18n="gwr_internal">To be confirmed by GIS Section</span>
+            </div>
+
+            <!-- SECTION A -->
+            <div class="glass-light rounded-2xl overflow-hidden">
+                <div class="px-6 py-4" style="border-bottom:1px solid rgba(200,150,42,0.15);background:rgba(200,150,42,0.06)">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--rc-gold);color:#001A3A">A</span>
+                        <span data-i18n="gwr_sec_a">Requesting Department Information</span>
+                    </h3>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-4">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-semibold text-blue-300 mb-2 uppercase tracking-wider" data-i18n="gwr_dept">Requesting Department / Section</label>
+                        <input type="text" id="gwr-dept" data-i18n-placeholder="gwr_dept_ph" placeholder="e.g. Infrastructure Department" class="rc-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-300 mb-2 uppercase tracking-wider" data-i18n="gwr_name">Requestor Name</label>
+                        <input type="text" id="gwr-requestor" data-i18n-placeholder="gwr_name_ph" placeholder="Full name" class="rc-input">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-blue-300 mb-2 uppercase tracking-wider" data-i18n="gwr_date">Date of Request</label>
+                        <input type="date" id="gwr-date" class="rc-input" style="color-scheme:dark">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION B -->
+            <div class="glass-light rounded-2xl overflow-hidden">
+                <div class="px-6 py-4" style="border-bottom:1px solid rgba(200,150,42,0.15);background:rgba(200,150,42,0.06)">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--rc-gold);color:#001A3A">B</span>
+                        <span data-i18n="gwr_sec_b">GIS Service Requested</span>
+                        <span class="text-xs text-blue-400 font-normal ml-auto" data-i18n="gwr_check_all">(Check all that apply)</span>
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="rc-check-grid">
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="spatial-data">
+                            <span data-i18n="svc_spatial">Spatial Data Provision (KMZ/CAD/Shapefile..etc)</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="map-production">
+                            <span data-i18n="svc_map">Map Production</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="web-mapping">
+                            <span data-i18n="svc_web">Web Mapping / Dashboard Dev / Application</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="3d-modeling">
+                            <span data-i18n="svc_3d">3D Modeling / Visualization</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="geocoding">
+                            <span data-i18n="svc_geo">Geocoding / Addressing</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="service" value="update-db">
+                            <span data-i18n="svc_db">Updating GIS Database (Add/Delete/Edit)</span>
+                        </label>
+                        <label class="rc-check-item md:col-span-2">
+                            <input type="checkbox" name="service" value="other">
+                            <span data-i18n="svc_other">Other:</span>
+                            <input type="text" data-i18n-placeholder="svc_other_ph" placeholder="Specify..." class="ml-2 flex-1 bg-transparent border-b text-sm focus:outline-none" style="border-color:rgba(200,150,42,0.3);color:#E8EDF4">
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION C -->
+            <div class="glass-light rounded-2xl overflow-hidden">
+                <div class="px-6 py-4" style="border-bottom:1px solid rgba(200,150,42,0.15);background:rgba(200,150,42,0.06)">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--rc-gold);color:#001A3A">C</span>
+                        <span data-i18n="gwr_sec_c">Project / Task Description</span>
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <p class="text-xs text-blue-400 mb-3" data-i18n="gwr_sec_c_hint">Please describe your request clearly (area of interest, data needed, purpose, output format, etc.):</p>
+                    <textarea id="gwr-desc" rows="6" data-i18n-placeholder="gwr_desc_ph" placeholder="Describe the GIS task, area of interest, required outputs, coordinate system, scale, etc." class="rc-input resize-none"></textarea>
+                </div>
+            </div>
+
+            <!-- SECTION D -->
+            <div class="glass-light rounded-2xl overflow-hidden">
+                <div class="px-6 py-4" style="border-bottom:1px solid rgba(200,150,42,0.15);background:rgba(200,150,42,0.06)">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--rc-gold);color:#001A3A">D</span>
+                        <span data-i18n="gwr_sec_d">Attachments</span>
+                        <span class="text-xs text-blue-400 font-normal ml-auto" data-i18n="gwr_check_all">(Check all that are included)</span>
+                    </h3>
+                </div>
+                <div class="p-6">
+                    <div class="rc-check-grid">
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="attachment" value="sketch">
+                            <span data-i18n="att_sketch">Location Sketch / Map</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="attachment" value="cad-gis">
+                            <span data-i18n="att_cad">CAD / GIS Files</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="attachment" value="docs">
+                            <span data-i18n="att_docs">Reference Documents / PDF</span>
+                        </label>
+                        <label class="rc-check-item">
+                            <input type="checkbox" name="attachment" value="tables">
+                            <span data-i18n="att_tables">Tables or Spreadsheets / CSV</span>
+                        </label>
+                        <label class="rc-check-item md:col-span-2">
+                            <input type="checkbox" name="attachment" value="other-att">
+                            <span data-i18n="att_other">Other:</span>
+                            <input type="text" data-i18n-placeholder="att_other_ph" placeholder="Specify..." class="ml-2 flex-1 bg-transparent border-b text-sm focus:outline-none" style="border-color:rgba(200,150,42,0.3);color:#E8EDF4">
+                        </label>
+                    </div>
+                    <!-- File upload area -->
+                    <div class="mt-4 border-2 border-dashed rounded-xl p-6 text-center cursor-pointer transition-colors" style="border-color:rgba(200,150,42,0.2)" id="drop-zone">
+                        <i class="fas fa-cloud-upload-alt text-2xl mb-2" style="color:rgba(200,150,42,0.5)"></i>
+                        <p class="text-sm text-blue-400" data-i18n="gwr_upload">Drag & drop files here or click to browse</p>
+                        <input type="file" multiple class="hidden" id="file-input">
+                    </div>
+                    <div id="file-list" class="mt-3 space-y-2"></div>
+                </div>
+            </div>
+
+            <!-- SECTION E — GIS Review (read-only display for staff) -->
+            <div class="glass-light rounded-2xl overflow-hidden">
+                <div class="px-6 py-4" style="border-bottom:1px solid rgba(200,150,42,0.15);background:rgba(200,150,42,0.06)">
+                    <h3 class="font-semibold text-sm flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold" style="background:var(--rc-gold);color:#001A3A">E</span>
+                        <span data-i18n="gwr_sec_e">GIS Department Review & Assignment</span>
+                        <span class="text-xs font-normal ml-auto px-2 py-0.5 rounded" style="background:rgba(200,150,42,0.1);color:var(--rc-gold);border:1px solid rgba(200,150,42,0.2)" data-i18n="gwr_gis_only">GIS Section Only</span>
+                    </h3>
+                </div>
+                <div class="p-6 overflow-x-auto">
+                    <table class="gwr-table">
+                        <thead>
+                            <tr>
+                                <th data-i18n="gwr_role">Role</th>
+                                <th data-i18n="gwr_col_name">Name</th>
+                                <th data-i18n="gwr_col_comments">Comments</th>
+                                <th data-i18n="gwr_col_date">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="text-blue-300 font-medium" data-i18n="gwr_manager">GIS Section Manager</td>
+                                <td><input type="text" class="rc-input py-1.5 text-xs" style="min-width:120px" placeholder="—" disabled></td>
+                                <td><input type="text" class="rc-input py-1.5 text-xs" style="min-width:160px" placeholder="—" disabled></td>
+                                <td><input type="date" class="rc-input py-1.5 text-xs" disabled style="color-scheme:dark"></td>
+                            </tr>
+                            <tr>
+                                <td class="text-blue-300 font-medium" data-i18n="gwr_executor">Executor</td>
+                                <td><input type="text" class="rc-input py-1.5 text-xs" style="min-width:120px" placeholder="—" disabled></td>
+                                <td><input type="text" class="rc-input py-1.5 text-xs" style="min-width:160px" placeholder="—" disabled></td>
+                                <td><input type="date" class="rc-input py-1.5 text-xs" disabled style="color-scheme:dark"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SUBMISSION INFO -->
+            <div class="rounded-2xl p-5" style="background:rgba(0,80,158,0.15);border:1px solid rgba(0,80,158,0.3)">
+                <h4 class="font-semibold text-sm mb-3 flex items-center gap-2">
+                    <i class="fas fa-paper-plane" style="color:var(--rc-gold)"></i>
+                    <span data-i18n="gwr_submit_info">Submission Instructions</span>
+                </h4>
+                <ul class="text-xs text-blue-300 space-y-1.5">
+                    <li><i class="fas fa-angle-right mr-2" style="color:var(--rc-gold)"></i><span data-i18n="gwr_submit1">Submit to: GIS Section – Urban Planning Department</span></li>
+                    <li><i class="fas fa-angle-right mr-2" style="color:var(--rc-gold)"></i><span>Email: </span><a href="mailto:GIS@rcjy.gov.sa" style="color:var(--rc-gold)">GIS@rcjy.gov.sa</a></li>
+                    <li><i class="fas fa-angle-right mr-2" style="color:var(--rc-gold)"></i><span data-i18n="gwr_submit3">Subject Line: GIS Service Request – [Your Department Name]</span></li>
+                    <li><i class="fas fa-angle-right mr-2" style="color:var(--rc-gold)"></i><span data-i18n="gwr_submit4">Attachments: Include all relevant documents</span></li>
+                </ul>
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <button onclick="submitGWR()" class="btn-gold w-full py-4 rounded-xl text-base font-bold flex items-center justify-center gap-3">
+                <i class="fas fa-paper-plane"></i>
+                <span data-i18n="gwr_submit_btn">Submit GIS Work Request</span>
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════════ -->
+<footer style="background:var(--rc-navy);border-top:1px solid rgba(200,150,42,0.2)" class="py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-center">
+        <p class="text-blue-400 text-xs">&copy; 2026 <span style="color:var(--rc-gold)">Royal Commission for Jubail & Yanbu</span> — JCPDI GIS Portal — Powered by ArcGIS</p>
+        <p class="text-blue-500 text-xs">الهيئة الملكية للجبيل وينبع | مدينة جازان للصناعات الأساسية والتحويلية</p>
+    </div>
+</footer>
+
+<!-- TOAST -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-4 rounded-2xl flex items-center gap-3 font-semibold text-sm shadow-2xl" style="background:var(--rc-navy);border:1px solid rgba(200,150,42,0.4);color:#E8EDF4">
+    <i class="fas fa-check-circle" style="color:var(--rc-gold)"></i>
+    <span id="toast-msg"></span>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
+<script>
+
+// ── DATA: Real URLs from xlsx ──────────────────
+const APPS = [
+    { id:1, title:"Allocated Land for Investors", titleAr:"الأراضي المخصصة للمستثمرين", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=6b42453a8ab3456aad201cd648cc97a8", cat:"investment", icon:"fa-handshake", color:"#C8962A" },
+    { id:2, title:"Site Selection", titleAr:"اختيار المواقع", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=ec4c5b6090394fbba94da5fc8044b907", cat:"investment", icon:"fa-map-pin", color:"#C8962A" },
+    { id:3, title:"Projects 2023-2024", titleAr:"مشاريع 2023-2024", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=85628da94c434c9fb73d758361bd4691", cat:"projects", icon:"fa-calendar-alt", color:"#00509E" },
+    { id:4, title:"Ongoing Projects", titleAr:"المشاريع الجارية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=9f0d3357ed2449c19d8b17314c3f1a7c", cat:"projects", icon:"fa-hard-hat", color:"#00509E" },
+    { id:5, title:"RC Projects", titleAr:"مشاريع الهيئة الملكية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=414e173865b94b2d91529bbb55ec2af0", cat:"projects", icon:"fa-building", color:"#00509E" },
+    { id:6, title:"Power Feeding Zones", titleAr:"مناطق تغذية الكهرباء", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=7e26b074140b45589083186474e6cbec", cat:"infrastructure", icon:"fa-bolt", color:"#F59E0B" },
+    { id:7, title:"Projects 2023", titleAr:"مشاريع 2023", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=aaa3bd896da34b9880731c88cd95be95", cat:"projects", icon:"fa-clipboard-list", color:"#00509E" },
+    { id:8, title:"Projects 2024", titleAr:"مشاريع 2024", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=644ca64f53974322a0c666d066d89699", cat:"projects", icon:"fa-tasks", color:"#00509E" },
+    { id:9, title:"JCPDI Phasing Plan", titleAr:"خطة التطوير المرحلي لمدينة جازان", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=a9de76f851f54e6c950fc69eb84bfa3b", cat:"projects", icon:"fa-sitemap", color:"#8B5CF6" },
+    { id:10, title:"Base Map", titleAr:"الخريطة الأساسية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/webappviewer/index.html?id=01218d04f9e743e7946579c19fbc3ff5", cat:"basemap", icon:"fa-map", color:"#10B981" },
+    { id:11, title:"Base Map (Satellite)", titleAr:"الخريطة الأساسية (الأقمار الصناعية)", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/webappviewer/index.html?id=6ddd05cda9514773b5bd1d77f6e60fc9", cat:"basemap", icon:"fa-satellite", color:"#10B981" },
+    { id:12, title:"JCPDI Roads (Package-5)", titleAr:"طرق مدينة جازان (الحزمة 5)", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=91241d54f1ae44c78802fc8a49a60efd", cat:"infrastructure", icon:"fa-road", color:"#F59E0B" },
+    { id:13, title:"Telecom Towers", titleAr:"أبراج الاتصالات", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=92a5dd60c2ef428d832127100043bf1f", cat:"infrastructure", icon:"fa-broadcast-tower", color:"#F59E0B" },
+    { id:14, title:"Drone Imagery JCPDI", titleAr:"صور الطائرات المسيّرة - مدينة جازان", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=555bee52b77b42368ca504329cdc65fd", cat:"basemap", icon:"fa-drone-alt", color:"#10B981" },
+];
+
+const DASHBOARDS = [
+    { id:1, title:"LandUse Budget", titleAr:"ميزانية استخدام الأراضي", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/fe11a18246d3482a97cd2dfd6ca635ce", icon:"fa-chart-pie", color:"#C8962A" },
+    { id:2, title:"Master Plan LandUse", titleAr:"استخدام أراضي المخطط العام", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/1c86ca7915a14d6eb13f13a535828635", icon:"fa-map-marked-alt", color:"#00509E" },
+    { id:3, title:"Private Projects", titleAr:"المشاريع الخاصة", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/339f04f8a57f4471b3e4fad98a5c00ce", icon:"fa-building", color:"#8B5CF6" },
+    { id:4, title:"Site Readiness Plan", titleAr:"خطة جاهزية الموقع", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/689a461980594586b92a81239e4c34cf", icon:"fa-check-circle", color:"#10B981" },
+    { id:5, title:"SEZ Allocated Lands", titleAr:"الأراضي المخصصة في المنطقة الاقتصادية الخاصة", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/112c81f4f430402c9dcfb45e462eeda4", icon:"fa-layer-group", color:"#F59E0B" },
+    { id:6, title:"Industrial Landuse Budget", titleAr:"ميزانية الأراضي الصناعية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/37be547ff5b842d1992ea2551548d7b8", icon:"fa-industry", color:"#C8962A" },
+    { id:7, title:"Aramco Investors", titleAr:"مستثمرو أرامكو", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/605ed91944004fe1beb869e67d822b41", icon:"fa-oil-can", color:"#00509E" },
+    { id:8, title:"Residential and Commercial Land Allocation", titleAr:"تخصيص الأراضي السكنية والتجارية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/1fe579700b584555ba577e58e85df019", icon:"fa-home", color:"#8B5CF6" },
+    { id:9, title:"Population Density", titleAr:"الكثافة السكانية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/516e8388b88a4125ae0c8fd445201b7f", icon:"fa-users", color:"#10B981" },
+    { id:10, title:"Sea Water Cooling Service", titleAr:"خدمة تبريد المياه البحرية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/dashboards/1fc3b070212b4ad8844c3dfde6c728cc", icon:"fa-water", color:"#06B6D4" },
+];
+
+const WEBMAPS = [
+    { id:1, title:"JCPDI Deed Boundary", titleAr:"حدود صكوك مدينة جازان", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=34ca60a9aee3494ebf5ae52e551e8125", icon:"fa-file-contract", color:"#C8962A" },
+    { id:2, title:"JCPDI and Expansion Boundaries", titleAr:"حدود مدينة جازان والتوسعات", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=43dd482e929646d4b52bab9dd2a071f4", icon:"fa-expand-arrows-alt", color:"#00509E" },
+    { id:3, title:"JCPDI SEZ Boundaries", titleAr:"حدود المنطقة الاقتصادية الخاصة", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=505941ae38d5483bae50c7a568e40f33", icon:"fa-border-all", color:"#8B5CF6" },
+    { id:4, title:"Zones Boundaries", titleAr:"حدود المناطق", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=b459da88b5e64ab88bc343264697205d", icon:"fa-draw-polygon", color:"#10B981" },
+    { id:5, title:"Haii Boundaries", titleAr:"حدود الأحياء", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=fb060ba9772b4f178e35ea2bf087b07e", icon:"fa-map-marked", color:"#F59E0B" },
+    { id:6, title:"LandUse Master Plan", titleAr:"خطة استخدام الأراضي الرئيسية", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=d1403e771b2c4d98a51da9c8a0a0e84d", icon:"fa-layer-group", color:"#C8962A" },
+    { id:7, title:"PBCD/LCD and SS", titleAr:"PBCD / LCD و SS", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/webappviewer/index.html?id=6494dd0b931b4915862672adb19071e5", icon:"fa-project-diagram", color:"#00509E" },
+    { id:8, title:"JCPDI Site Readiness", titleAr:"جاهزية موقع مدينة جازان", url:"https://rcjazgislic.rcjy.gov.sa/portal/apps/experiencebuilder/experience/?id=b0dfb7c978084d4d9e74f14bd8ace16f", icon:"fa-check-double", color:"#10B981" },
+];
+
+const NEWS_ITEMS = [
+    { date:"May 2026", titleEn:"JCPDI Master Plan Updated", titleAr:"تحديث المخطط العام لمدينة جازان", descEn:"Phase 3 boundaries revised to include new SEZ expansion zone in the northern sector.", descAr:"تم تعديل حدود المرحلة 3 لتشمل منطقة توسع المنطقة الاقتصادية الخاصة الجديدة في القطاع الشمالي.", icon:"fa-map-marked-alt", color:"#C8962A" },
+    { date:"April 2026", titleEn:"Drone Imagery Update", titleAr:"تحديث صور الطائرات المسيّرة", descEn:"Latest high-resolution drone imagery for JCPDI is now available in the GIS portal.", descAr:"أحدث صور الطائرات المسيّرة عالية الدقة لمدينة جازان متاحة الآن في بوابة نظم المعلومات الجغرافية.", icon:"fa-camera", color:"#00509E" },
+    { date:"March 2026", titleEn:"New Dashboards Launched", titleAr:"إطلاق لوحات بيانات جديدة", descEn:"Sea Water Cooling Service and Population Density dashboards are now live and accessible.", descAr:"لوحتا بيانات خدمة تبريد المياه البحرية والكثافة السكانية متاحتان الآن.", icon:"fa-chart-bar", color:"#10B981" },
+    { date:"March 2026", titleEn:"RCJY Digital Transformation", titleAr:"التحول الرقمي للهيئة الملكية", descEn:"Royal Commission advances its digital GIS infrastructure across all industrial cities.", descAr:"تواصل الهيئة الملكية تعزيز البنية التحتية الرقمية لنظم المعلومات الجغرافية في جميع المدن الصناعية.", icon:"fa-digital-tachograph", color:"#8B5CF6" },
+    { date:"Feb 2026", titleEn:"GIS Data Standards v2.1", titleAr:"معايير بيانات نظم المعلومات الجغرافية v2.1", descEn:"Updated coordinate system standards and layer naming conventions published for JCPDI GIS.", descAr:"نُشرت معايير نظام الإحداثيات المحدثة واتفاقيات تسمية الطبقات لنظم المعلومات الجغرافية.", icon:"fa-book", color:"#C8962A" },
+    { date:"Jan 2026", titleEn:"GIS Work Request Portal Live", titleAr:"إطلاق بوابة طلبات عمل نظم المعلومات", descEn:"Departments can now submit GIS work requests digitally via this portal.", descAr:"يمكن للأقسام الآن تقديم طلبات عمل نظم المعلومات الجغرافية رقمياً عبر هذه البوابة.", icon:"fa-file-alt", color:"#F59E0B" },
+];
+
+const UPDATES = [
+    { icon:"fa-map-marked-alt", title:"Master Plan 2026 Updated", titleAr:"تحديث المخطط العام 2026", time:"2 hours ago", timeAr:"منذ ساعتين", color:"#C8962A" },
+    { icon:"fa-chart-bar",     title:"New Dashboard: Sea Water Cooling", titleAr:"لوحة جديدة: تبريد المياه البحرية", time:"5 hours ago", timeAr:"منذ 5 ساعات", color:"#00509E" },
+    { icon:"fa-camera",        title:"Drone Imagery JCPDI Published", titleAr:"نشر صور الطائرات المسيّرة", time:"Yesterday", timeAr:"أمس", color:"#10B981" },
+    { icon:"fa-file-alt",      title:"GIS Work Request Portal Launched", titleAr:"إطلاق بوابة طلبات عمل نظم المعلومات", time:"2 days ago", timeAr:"منذ يومين", color:"#8B5CF6" },
+];
+
+// ── SEARCH INDEX ──────────────────────────────
+const SEARCH_INDEX = [
+    ...APPS.map(a => ({ title:a.title, titleAr:a.titleAr, section:'applications', sub:'Application' })),
+    ...DASHBOARDS.map(d => ({ title:d.title, titleAr:d.titleAr, section:'dashboards', sub:'Dashboard' })),
+    ...WEBMAPS.map(m => ({ title:m.title, titleAr:m.titleAr, section:'webmaps', sub:'Web Map' })),
+];
+
+// ── RENDER HELPERS ────────────────────────────
+function catColors(cat) {
+    return { investment:'#C8962A', projects:'#00509E', basemap:'#10B981', infrastructure:'#F59E0B' }[cat] || '#C8962A';
+}
+function catLabel(cat) {
+    const en = { investment:'Investment', projects:'Projects', basemap:'Base Map', infrastructure:'Infrastructure' };
+    const ar = { investment:'الاستثمار', projects:'المشاريع', basemap:'الخريطة الأساسية', infrastructure:'البنية التحتية' };
+    return { en: en[cat]||cat, ar: ar[cat]||cat };
+}
+
+function renderApps() {
+    const grid = document.getElementById('apps-grid');
+    grid.innerHTML = APPS.map(a => {
+        const c = catColors(a.cat);
+        const lbl = catLabel(a.cat);
+        return `<div class="app-card card-lift rounded-2xl overflow-hidden" data-cat="${a.cat}" style="background:rgba(0,26,58,0.7)">
+            <div class="h-36 relative overflow-hidden grid-bg" style="background:linear-gradient(135deg,rgba(0,26,58,0.9),rgba(0,51,102,0.7))">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas ${a.icon} text-5xl" style="color:${c};opacity:0.25"></i>
+                </div>
+                <div class="absolute top-3 right-3 tag-badge" style="background:${c}22;color:${c};border:1px solid ${c}44">
+                    <span class="en-text">${lbl.en}</span><span class="ar-text hidden">${lbl.ar}</span>
+                </div>
+            </div>
+            <div class="p-5">
+                <h3 class="font-bold mb-2 text-sm leading-snug en-text">${a.title}</h3>
+                <h3 class="font-bold mb-2 text-sm leading-snug ar-text hidden">${a.titleAr}</h3>
+                <div class="flex items-center justify-between mt-4">
+                    <div class="flex items-center gap-1.5">
+                        <i class="fas fa-circle text-[6px]" style="color:#10B981"></i>
+                        <span class="text-xs text-blue-400">ArcGIS ExperienceBuilder</span>
+                    </div>
+                    <a href="${a.url}" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" style="background:${c}22;color:${c};border:1px solid ${c}44" onmouseover="this.style.background='${c}40'" onmouseout="this.style.background='${c}22'">
+                        <span class="en-text">Launch</span><span class="ar-text hidden">تشغيل</span>
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function renderDashboards() {
+    const grid = document.getElementById('dashboards-grid');
+    grid.innerHTML = DASHBOARDS.map(d => `
+        <div class="card-lift rounded-2xl overflow-hidden" style="background:rgba(0,26,58,0.7)">
+            <div class="h-28 relative overflow-hidden grid-bg" style="background:linear-gradient(135deg,rgba(0,26,58,0.9),rgba(0,51,102,0.7))">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas ${d.icon} text-5xl" style="color:${d.color};opacity:0.2"></i>
+                </div>
+                <div class="absolute top-3 left-3 px-2 py-1 rounded text-[10px] font-bold" style="background:${d.color}22;color:${d.color};border:1px solid ${d.color}44">
+                    <i class="fas fa-circle text-[6px] mr-1" style="color:#10B981"></i>Live
+                </div>
+            </div>
+            <div class="p-5">
+                <h3 class="font-bold text-sm mb-1 en-text">${d.title}</h3>
+                <h3 class="font-bold text-sm mb-1 ar-text hidden">${d.titleAr}</h3>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-xs text-blue-400">ArcGIS Dashboard</span>
+                    <a href="${d.url}" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" style="background:${d.color}22;color:${d.color};border:1px solid ${d.color}44" onmouseover="this.style.background='${d.color}40'" onmouseout="this.style.background='${d.color}22'">
+                        <span class="en-text">Open</span><span class="ar-text hidden">فتح</span>
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function renderWebMaps() {
+    const grid = document.getElementById('webmaps-grid');
+    grid.innerHTML = WEBMAPS.map(m => `
+        <div class="card-lift rounded-2xl overflow-hidden" style="background:rgba(0,26,58,0.7)">
+            <div class="h-32 relative overflow-hidden grid-bg" style="background:linear-gradient(135deg,rgba(0,26,58,0.9),rgba(0,51,102,0.7))">
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <i class="fas ${m.icon} text-5xl" style="color:${m.color};opacity:0.22"></i>
+                </div>
+            </div>
+            <div class="p-5">
+                <h3 class="font-bold text-sm mb-1 en-text">${m.title}</h3>
+                <h3 class="font-bold text-sm mb-1 ar-text hidden">${m.titleAr}</h3>
+                <div class="flex items-center justify-between mt-4">
+                    <span class="text-xs text-blue-400">ArcGIS Web Map</span>
+                    <a href="${m.url}" target="_blank" class="px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all" style="background:${m.color}22;color:${m.color};border:1px solid ${m.color}44" onmouseover="this.style.background='${m.color}40'" onmouseout="this.style.background='${m.color}22'">
+                        <span class="en-text">Open Map</span><span class="ar-text hidden">فتح الخريطة</span>
+                        <i class="fas fa-external-link-alt text-[10px]"></i>
+                    </a>
+                </div>
+            </div>
+        </div>`).join('');
+}
+
+function renderNews() {
+    const grid = document.getElementById('news-grid');
+    const isAr = document.documentElement.getAttribute('lang') === 'ar';
+    grid.innerHTML = NEWS_ITEMS.map(n => `
+        <div class="card-lift rounded-2xl overflow-hidden" style="background:rgba(0,26,58,0.7)">
+            <div class="h-28 flex items-center justify-center" style="background:linear-gradient(135deg,rgba(0,26,58,0.9),rgba(0,51,102,0.7))">
+                <i class="fas ${n.icon} text-4xl" style="color:${n.color};opacity:0.6"></i>
+            </div>
+            <div class="p-5">
+                <div class="text-xs mb-2" style="color:${n.color}">${n.date}</div>
+                <h3 class="font-bold text-sm mb-2 en-text">${n.titleEn}</h3>
+                <h3 class="font-bold text-sm mb-2 ar-text hidden">${n.titleAr}</h3>
+                <p class="text-xs text-blue-300 leading-relaxed en-text">${n.descEn}</p>
+                <p class="text-xs text-blue-300 leading-relaxed ar-text hidden">${n.descAr}</p>
+            </div>
+        </div>`).join('');
+}
+
+function renderUpdates() {
+    const feed = document.getElementById('updates-feed');
+    const isAr = document.documentElement.getAttribute('lang') === 'ar';
+    feed.innerHTML = UPDATES.map(u => `
+        <div class="flex items-start gap-3 p-3 rounded-xl transition-colors" style="hover:background:rgba(0,51,102,0.2)">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0" style="background:${u.color}15;border:1px solid ${u.color}30">
+                <i class="fas ${u.icon} text-sm" style="color:${u.color}"></i>
+            </div>
+            <div>
+                <div class="text-sm font-semibold en-text">${u.title}</div>
+                <div class="text-sm font-semibold ar-text hidden">${u.titleAr}</div>
+                <div class="text-xs text-blue-400 mt-0.5 en-text">${u.time}</div>
+                <div class="text-xs text-blue-400 mt-0.5 ar-text hidden">${u.timeAr}</div>
+            </div>
+        </div>`).join('');
+}
+
+// ── FILTER APPS ───────────────────────────────
+function filterCards(type, cat) {
+    const cards = document.querySelectorAll('.app-card');
+    cards.forEach(c => {
+        c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none';
+    });
+    document.querySelectorAll('.app-filter').forEach(b => {
+        const isActive = b.dataset.filter === cat;
+        b.classList.toggle('filter-active', isActive);
+        b.classList.toggle('text-blue-300', !isActive);
+        if (isActive) { b.style.color = '#001A3A'; }
+        else { b.style.color = ''; }
+    });
+}
+
+// ── NAVIGATION ────────────────────────────────
+function showSection(name) {
+    document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+    const sec = document.getElementById('section-' + name);
+    if (sec) { sec.classList.add('active'); window.scrollTo({top:0,behavior:'smooth'}); }
+    document.querySelectorAll('.nav-btn').forEach(b => {
+        const active = b.dataset.section === name;
+        if (active) b.classList.add('nav-active'); else b.classList.remove('nav-active');
+    });
+    if (name === 'news') renderNews();
+}
+
+let mobileOpen = false;
+function toggleMobileMenu() {
+    const m = document.getElementById('mobile-menu');
+    mobileOpen = !mobileOpen;
+    if (mobileOpen) m.classList.add('open'); else m.classList.remove('open');
+}
+function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    mobileOpen = false;
+}
+
+// ── SEARCH ────────────────────────────────────
+let searchOpen = false;
+function toggleSearch() {
+    searchOpen = !searchOpen;
+    const o = document.getElementById('search-overlay');
+    if (searchOpen) { o.classList.remove('hidden'); setTimeout(()=>document.getElementById('search-input').focus(),100); }
+    else { o.classList.add('hidden'); }
+}
+function doSearch(q) {
+    const res = document.getElementById('search-results');
+    const isAr = document.documentElement.getAttribute('lang') === 'ar';
+    if (!q || q.length < 2) { res.innerHTML = ''; return; }
+    const hits = SEARCH_INDEX.filter(i => {
+        const text = (i.title + ' ' + i.titleAr + ' ' + i.sub).toLowerCase();
+        return text.includes(q.toLowerCase());
+    });
+    res.innerHTML = hits.length
+        ? hits.map(h => `<div onclick="showSection('${h.section}');toggleSearch()" class="p-3 rounded-xl cursor-pointer flex justify-between items-center transition-colors" style="background:rgba(0,51,102,0.3);border:1px solid rgba(200,150,42,0.1);" onmouseover="this.style.borderColor='rgba(200,150,42,0.3)'" onmouseout="this.style.borderColor='rgba(200,150,42,0.1)'">
+            <span class="text-sm font-medium">${isAr ? h.titleAr : h.title}</span>
+            <span class="text-xs text-blue-400 capitalize">${h.sub}</span>
+        </div>`).join('')
+        : `<p class="text-blue-400 text-sm p-3">${isAr ? 'لا توجد نتائج.' : 'No results found.'}</p>`;
+}
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { if (searchOpen) toggleSearch(); closeMobileMenu(); }
+});
+
+// ── CLOCK ─────────────────────────────────────
+function updateClock() {
+    const ast = new Date(new Date().toLocaleString('en-US', {timeZone:'Asia/Riyadh'}));
+    const el = document.getElementById('clock');
+    if (el) el.textContent = String(ast.getHours()).padStart(2,'0') + ':' + String(ast.getMinutes()).padStart(2,'0');
+}
+updateClock(); setInterval(updateClock, 30000);
+
+// ── GWR ───────────────────────────────────────
+function generateGWRNumber() {
+    const now = new Date();
+    const yr = now.getFullYear();
+    const mo = String(now.getMonth()+1).padStart(2,'0');
+    const rnd = String(Math.floor(Math.random()*9000)+1000);
+    document.getElementById('gwr-number').textContent = `GWR-${yr}${mo}-${rnd}`;
+}
+
+// Set today's date
+document.addEventListener('DOMContentLoaded', () => {
+    const d = document.getElementById('gwr-date');
+    if (d) d.value = new Date().toISOString().split('T')[0];
+    generateGWRNumber();
+});
+
+// File drop zone
+document.getElementById('drop-zone').addEventListener('click', () => document.getElementById('file-input').click());
+document.getElementById('file-input').addEventListener('change', function() {
+    const list = document.getElementById('file-list');
+    list.innerHTML = Array.from(this.files).map(f =>
+        `<div class="flex items-center gap-2 px-3 py-2 rounded-lg text-xs" style="background:rgba(0,51,102,0.3);border:1px solid rgba(200,150,42,0.15)">
+            <i class="fas fa-paperclip" style="color:var(--rc-gold)"></i>
+            <span class="text-blue-200">${f.name}</span>
+            <span class="text-blue-400 ml-auto">${(f.size/1024).toFixed(1)} KB</span>
+        </div>`).join('');
+});
+
+function submitGWR() {
+    const dept = document.getElementById('gwr-dept').value.trim();
+    const name = document.getElementById('gwr-requestor').value.trim();
+    const desc = document.getElementById('gwr-desc').value.trim();
+    if (!dept || !name || !desc) {
+        showToast('⚠ Please fill in Department, Name, and Description.', 4000);
+        return;
+    }
+    showToast('✓ GIS Work Request submitted successfully! The GIS Section will contact you shortly.', 5000);
+    // Reset
+    document.getElementById('gwr-dept').value = '';
+    document.getElementById('gwr-requestor').value = '';
+    document.getElementById('gwr-desc').value = '';
+    document.querySelectorAll('input[name="service"], input[name="attachment"]').forEach(c => c.checked = false);
+    document.getElementById('file-list').innerHTML = '';
+    generateGWRNumber();
+}
+
+function showToast(msg, duration=4000) {
+    const t = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), duration);
+}
+
+// ── LANGUAGE ──────────────────────────────────
+const T = {
+    topbar_loc:         'مدينة جازان للصناعات الأساسية والتحويلية — المملكة العربية السعودية',
+    topbar_status:      'جميع الأنظمة تعمل',
+    logo_sub:           'بوابة نظم المعلومات الجغرافية',
+    nav_home:           'الرئيسية',
+    nav_apps:           'التطبيقات',
+    nav_dashboards:     'لوحات البيانات',
+    nav_webmaps:        'الخرائط التفاعلية',
+    nav_news:           'الأخبار والفعاليات',
+    nav_contact:        'تواصل معنا',
+    nav_gwr:            'طلب عمل نظم المعلومات',
+    hero_badge:         'الهيئة الملكية للجبيل وينبع — نظم المعلومات الجغرافية لمدينة جازان',
+    hero_title1:        'مدينة جازان',
+    hero_title2:        'بوابة نظم المعلومات',
+    hero_desc:          'منصة جغرافية مركزية لمدينة جازان للصناعات الأساسية والتحويلية. تصفح التطبيقات التفاعلية ولوحات البيانات الفورية والخرائط الإلكترونية وقدم طلبات عمل نظم المعلومات.',
+    hero_btn1:          'استكشاف التطبيقات',
+    hero_btn2:          'تقديم طلب نظم المعلومات',
+    stat_apps:          'تطبيق نظم المعلومات',
+    stat_maps:          'خريطة تفاعلية',
+    stat_dash:          'لوحة بيانات',
+    quick_access:       'الوصول السريع',
+    quick_access_sub:   'انتقل مباشرة إلى أي خدمة نظم معلومات جغرافية',
+    qa_apps_sub:        '14 تطبيق نظم معلومات جغرافية',
+    qa_dash_sub:        'تحليلات فورية',
+    qa_maps_sub:        'طبقات البيانات المكانية',
+    qa_gwr_sub:         'تقديم نموذج طلب عمل',
+    recent_updates:     'آخر التحديثات',
+    last_updated:       'آخر تحديث: اليوم',
+    apps_heading:       'التطبيقات',
+    apps_sub:           'تطبيقات نظم معلومات جغرافية متخصصة طُوِّرت لعمليات مدينة جازان.',
+    filter_all:         'الكل',
+    filter_investment:  'الاستثمار',
+    filter_projects:    'المشاريع',
+    filter_basemap:     'الخرائط الأساسية',
+    filter_infra:       'البنية التحتية',
+    dash_heading:       'لوحات البيانات',
+    dash_sub:           'لوحات تشغيلية فورية لاستخدام أراضي مدينة جازان والمشاريع والبنية التحتية.',
+    webmaps_heading:    'الخرائط التفاعلية',
+    webmaps_sub:        'استكشاف حدود مدينة جازان واستخدام الأراضي وجاهزية الموقع عبر خرائط ArcGIS.',
+    news_heading:       'والفعاليات',
+    news_sub:           'أحدث التحديثات من فريق نظم المعلومات الجغرافية في JCPDI وإعلانات الهيئة الملكية.',
+    contact_heading:    'فريق نظم المعلومات',
+    contact_sub:        'تواصل مع فريق نظم المعلومات الجغرافية في JCPDI للدعم أو طلب البيانات أو التعاون.',
+    contact_office:     'مركز عمليات نظم المعلومات الجغرافية',
+    contact_address1:   'قسم التخطيط العمراني – قسم نظم المعلومات الجغرافية',
+    contact_address2:   'مدينة جازان للصناعات الأساسية والتحويلية',
+    contact_address3:   'منطقة جازان، المملكة العربية السعودية',
+    contact_label:      'التواصل',
+    contact_sub_label:  'نظم المعلومات الجغرافية للتخطيط العمراني جازان — الهيئة الملكية',
+    contact_gwr_title:  'تحتاج دعم نظم المعلومات؟',
+    contact_gwr_desc:   'قدم طلب عمل نظم معلومات جغرافية رسمياً للطلبات بين الأقسام.',
+    contact_gwr_btn:    'فتح نموذج طلب العمل',
+    contact_send:       'إرسال رسالة',
+    contact_send_btn:   'إرسال الرسالة',
+    ph_name:            'اسمك',
+    ph_dept:            'القسم / الإدارة',
+    ph_email:           'البريد الإلكتروني',
+    ph_msg:             'رسالتك...',
+    gwr_badge:          'قسم التخطيط العمراني – قسم نظم المعلومات الجغرافية',
+    gwr_sub:            'للاستخدام الداخلي لطلبات الدعم بين الأقسام',
+    gwr_number:         'AUTO-GENERATED',
+    gwr_internal:       'تُؤكد من قِبَل قسم نظم المعلومات الجغرافية',
+    gwr_sec_a:          'معلومات الجهة الطالبة',
+    gwr_dept:           'القسم / الجهة الطالبة',
+    gwr_dept_ph:        'مثال: قسم البنية التحتية',
+    gwr_name:           'اسم مقدم الطلب',
+    gwr_name_ph:        'الاسم الكامل',
+    gwr_date:           'تاريخ الطلب',
+    gwr_sec_b:          'الخدمة المطلوبة من نظم المعلومات الجغرافية',
+    gwr_check_all:      '(اختر ما ينطبق)',
+    svc_spatial:        'توفير البيانات المكانية (KMZ/CAD/Shapefile..)',
+    svc_map:            'إنتاج الخرائط',
+    svc_web:            'تطوير الخرائط/لوحات البيانات التفاعلية',
+    svc_3d:             'النمذجة ثلاثية الأبعاد / التصور المرئي',
+    svc_geo:            'الترميز الجغرافي / العنونة',
+    svc_db:             'تحديث قاعدة بيانات نظم المعلومات الجغرافية',
+    svc_other:          'أخرى:',
+    svc_other_ph:       'حدد...',
+    gwr_sec_c:          'وصف المشروع / المهمة',
+    gwr_sec_c_hint:     'يرجى وصف طلبك بوضوح (منطقة الاهتمام، البيانات المطلوبة، الغرض، تنسيق الإخراج، إلخ):',
+    gwr_desc_ph:        'صف مهمة نظم المعلومات الجغرافية، منطقة الاهتمام، المخرجات المطلوبة، نظام الإحداثيات، المقياس، إلخ.',
+    gwr_sec_d:          'المرفقات',
+    att_sketch:         'رسم تخطيطي للموقع / خريطة',
+    att_cad:            'ملفات CAD / GIS',
+    att_docs:           'وثائق مرجعية / PDF',
+    att_tables:         'جداول أو جداول بيانات / CSV',
+    att_other:          'أخرى:',
+    att_other_ph:       'حدد...',
+    gwr_upload:         'اسحب وأفلت الملفات هنا أو انقر للتصفح',
+    gwr_sec_e:          'مراجعة قسم نظم المعلومات الجغرافية والتعيين',
+    gwr_gis_only:       'قسم نظم المعلومات فقط',
+    gwr_role:           'الدور',
+    gwr_col_name:       'الاسم',
+    gwr_col_comments:   'الملاحظات',
+    gwr_col_date:       'التاريخ',
+    gwr_manager:        'مدير قسم نظم المعلومات الجغرافية',
+    gwr_executor:       'المنفذ',
+    gwr_submit_info:    'تعليمات التقديم',
+    gwr_submit1:        'إرسال إلى: قسم نظم المعلومات الجغرافية – قسم التخطيط العمراني',
+    gwr_submit3:        'سطر الموضوع: طلب خدمة نظم معلومات جغرافية – [اسم قسمك]',
+    gwr_submit4:        'المرفقات: أدرج جميع الوثائق ذات الصلة',
+    gwr_submit_btn:     'تقديم طلب عمل نظم المعلومات الجغرافية',
+    search_placeholder: 'ابحث عن تطبيقات، لوحات، خرائط...',
+};
+
+let lang = 'en';
+function setLang(l) {
+    lang = l;
+    const isAr = l === 'ar';
+    document.documentElement.setAttribute('dir', isAr ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', isAr ? 'ar' : 'en');
+
+    // Toggle lang buttons
+    document.getElementById('btn-en').style.cssText = isAr ? 'background:transparent;color:#93C5FD' : 'background:var(--rc-gold);color:#001A3A';
+    document.getElementById('btn-ar').style.cssText = isAr ? 'background:var(--rc-gold);color:#001A3A' : 'background:transparent;color:#93C5FD';
+
+    // Translate data-i18n
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (isAr && T[k]) el.textContent = T[k];
+        else if (!isAr && el._en !== undefined) el.textContent = el._en;
+    });
+
+    // Translate placeholders
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+        const k = el.getAttribute('data-i18n-placeholder');
+        if (isAr && T[k]) el.placeholder = T[k];
+        else if (!isAr && el._enph !== undefined) el.placeholder = el._enph;
+    });
+
+    // Toggle AR/EN content
+    document.querySelectorAll('.ar-text').forEach(el => el.classList.toggle('hidden', !isAr));
+    document.querySelectorAll('.en-text').forEach(el => el.classList.toggle('hidden', isAr));
+
+    renderUpdates();
+    if (document.getElementById('section-news').classList.contains('active')) renderNews();
+}
+
+// ── INIT ─────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+    // Cache English values
+    document.querySelectorAll('[data-i18n]').forEach(el => el._en = el.textContent);
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => el._enph = el.placeholder);
+
+    renderApps();
+    renderDashboards();
+    renderWebMaps();
+    renderUpdates();
+    showSection('home');
+});
+</script>
+</body>
+</html>
